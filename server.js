@@ -1,62 +1,45 @@
 
-console.log("we are running... hehe")
-/* Empty JS object to act as endpoint for all routes */
-projectData = {};
-
-/* Express to run server and routes */
 const express = require('express');
-
-/* Start up an instance of app */
 const app = express();
+const path = require('path');
+const bodyParser = require('body-parser');
+const PORT = 3000;
 
-/* Dependencies */
-const bodyParser = require('body-parser')
-/* Middleware*/
-app.use(bodyParser.urlencoded({ extended: false }));
+// Middleware to parse URL-encoded data
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 const cors = require('cors');
 app.use(cors());
 
-/* Initialize the main project folder*/
-app.use(express.static('website'));
+app.use(express.static(path.join(__dirname, 'public'))); // Assuming your HTML file is in a folder named 'public'
 
-const port = 3000;
-/* Spin up the server*/
-const server = app.listen(port, listening);
-function listening() {
-  // console.log(server);
-  console.log(`running on localhost: ${port}`);
-};
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
-  console.log("we are running...")
-})
+  res.send("Hello!"); // Respond with a greeting
+});
+
+let submittedData = [];
+
+ app.post('/submit', (req, res) => {
+   // Handle the request here
+   const data = req.body; // Assuming the form data is sent in the body
+    submittedData.push(data); // Save the data to the array
+   res.send('Data received');
+ });
+
+// Handle POST request
+//  app.post('/submit', (req, res) => {
+//      const username = req.body.username; // Get the submitted username
+//      res.send(`Hello, ${username}!`); // Respond with a greeting
+//  });
+
+app.get('/data', (req, res) => {
+  res.json(submittedData); // Send the stored data as JSON
+});
 
 
-// GET route
-app.get('/all', sendData);
-
-function sendData(request, response) {
-  response.send(projectData);
-};
-
-// POST route
-app.post('/add', callBack);
-
-function callBack(req, res) {
-  res.send('POST received');
-}
-
-// POST an animal
-const data = [];
-
-app.post('/animal', addAnimal);
-
-function addAnimal(req, res) {
-  data.push(req.body);
-};
-
-app.get('/showdata', (req, res) =>{
-  res.json(data);
-})
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
