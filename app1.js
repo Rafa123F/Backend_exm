@@ -1,8 +1,11 @@
 console.log('Hello world!');
 const express = require('express') // call library
 const app = express() //put the library in app
+app.use(express.json());
+
 const port = 3001
 
+const videos = [];
 const products = [
     {
         id: 1,
@@ -45,17 +48,27 @@ app.get("/", (req, res) => {
     res.send("Hello World!");
 })
 
+app.get("/vid", (req, res) => {
+    res.send(videos); // all product
+})
+
+app.post('/vid', (req, res) => {
+    const video = req.body;
+    console.log(video);
+    try {
+        res.status(201);
+        res.send('creating a video');
+        videos.push(video);
+    } catch (err) {
+        res.status(400);
+        res.send('Invalid Video object!');
+    }
+
+})
+
 app.get("/products", (req, res) => {
     res.json(products); // all product
 })
-
-app.get("/products/id=4", (req, res) => {
-    res.send("No data!");
-})
-app.get("/products/id=5", (req, res) => {
-    res.send("No data!");
-})
-
 
 app.listen(port, () => {
     console.log(`App is running on http://localhost:${port}`)
